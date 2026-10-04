@@ -28,34 +28,6 @@ Features an **Explainable AI (XAI)** engine that highlights suspicious trigger w
 - **API Framework**: Flask, Flask-CORS
 - **Frontend**: Vanilla HTML5, CSS3 (Glassmorphism & HSL Color System), JavaScript ES6+
 
----
-
-## 🚀 Quick Start & Installation
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/balazoro08/Spam-Message-Detector.git
-cd Spam-Message-Detector
-```
-
-### 2. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Train the Model
-```bash
-python train_model.py
-```
-*(This vectorizes the dataset and generates `spam_model.pkl`, `vectorizer.pkl`, and `metrics.json`)*
-
-### 4. Run the Web Application
-```bash
-python app.py
-```
-Open your browser and navigate to: **`http://127.0.0.1:5000`**
-
----
 
 ## 📊 API Endpoints
 
