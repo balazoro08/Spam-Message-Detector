@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShieldSpam AI — Smart Multi-Channel Spam Detector</title>
+  <meta name="description" content="AI-powered spam message detector for SMS, emails, and social media comments using NLP and Machine Learning." />
+  
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Background Glow FX -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+  <div class="glow-orb orb-3"></div>
+
+  <div class="app-container">
+    <!-- Navbar Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-logo">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div class="brand-text">
+          <h1>ShieldSpam <span class="accent-text">AI</span></h1>
+          <p class="subtitle">Multi-Channel Spam & Fraud Detection Engine</p>
+        </div>
+      </div>
+
+      <div class="header-status">
+        <div class="status-pill" id="apiStatus">
+          <span class="pulse-dot"></span>
+          <span class="status-label">Model Online</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="detector">
+        <i class="fa-solid fa-magnifying-glass-chart"></i> Real-time Detector
+      </button>
+      <button class="tab-btn" data-tab="batch">
+        <i class="fa-solid fa-layer-group"></i> Batch File Scanner
+      </button>
+      <button class="tab-btn" data-tab="analytics">
+        <i class="fa-solid fa-chart-line"></i> Model Analytics & Performance
+      </button>
+    </nav>
+
+    <!-- TAB 1: REAL-TIME DETECTOR WORKSPACE -->
+    <main class="tab-content active" id="tab-detector">
+      <div class="workspace-grid">
+
+        <!-- INPUT PANEL -->
+        <section class="card input-card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-sliders"></i> Message Input & Domain</h3>
+            <span class="badge channel-badge" id="currentChannelBadge">SMS Mode</span>
+          </div>
+
+          <!-- Domain Selector -->
+          <div class="domain-selector">
+            <label class="domain-option active" data-channel="sms">
+              <input type="radio" name="channel" value="sms" checked />
+              <i class="fa-solid fa-comment-sms"></i>
+              <span>SMS / Text</span>
+            </label>
+
+            <label class="domain-option" data-channel="email">
+              <input type="radio" name="channel" value="email" />
+              <i class="fa-solid fa-envelope"></i>
+              <span>Email</span>
+            </label>
+
+            <label class="domain-option" data-channel="comment">
+              <input type="radio" name="channel" value="comment" />
+              <i class="fa-solid fa-comments"></i>
+              <span>Social Comment</span>
+            </label>
+          </div>
+
+          <!-- Email Subject Field (Hidden by default, shown for email mode) -->
+          <div class="input-group hidden" id="subjectGroup">
+            <label for="emailSubject"><i class="fa-solid fa-heading"></i> Email Subject Line</label>
+            <input type="text" id="emailSubject" placeholder="e.g. URGENT: Account Action Required" />
+          </div>
+
+          <!-- Message Textarea -->
+          <div class="input-group">
+            <div class="textarea-header">
+              <label for="messageInput"><i class="fa-solid fa-align-left"></i> Content to Analyze</label>
+              <div class="text-counts">
+                <span id="charCount">0 chars</span> • <span id="wordCount">0 words</span>
+              </div>
+            </div>
+            <textarea id="messageInput" rows="6" placeholder="Type, paste, or select a preset sample to test..."></textarea>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="presets-bar">
+            <span class="presets-title"><i class="fa-solid fa-bolt"></i> Load Preset:</span>
+            <div class="presets-btns">
+              <button class="preset-chip spam" id="presetSpam"><i class="fa-solid fa-bug"></i> Spam Example</button>
+              <button class="preset-chip ham" id="presetHam"><i class="fa-solid fa-circle-check"></i> Safe Example</button>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-row">
+            <button class="btn btn-secondary" id="btnClear">
+              <i class="fa-solid fa-rotate-left"></i> Clear
+            </button>
+            <button class="btn btn-primary" id="btnAnalyze">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Detect Spam <kbd>Ctrl + Enter</kbd>
+            </button>
+          </div>
+        </section>
+
+        <!-- RESULTS PANEL -->
+        <section class="card results-card" id="resultsCard">
+
+          <!-- Initial State Placeholder -->
+          <div class="results-empty" id="resultsEmpty">
+            <div class="empty-icon">
+              <i class="fa-solid fa-shield-cat"></i>
+            </div>
+            <h4>Ready to Analyze</h4>
+            <p>Select a message channel, type or load a sample message, and click <strong>Detect Spam</strong> to view AI predictions.</p>
+          </div>
+
+          <!-- Active Analysis View -->
+          <div class="results-active hidden" id="resultsActive">
+            
+            <!-- Verdict Banner -->
+            <div class="verdict-banner" id="verdictBanner">
+              <div class="verdict-icon" id="verdictIcon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+              <div class="verdict-info">
+                <span class="verdict-tag" id="verdictTag">SPAM DETECTED</span>
+                <h2 class="verdict-title" id="verdictTitle">High Risk Threat</h2>
+              </div>
+            </div>
+
+            <!-- Metrics Dual Row -->
+            <div class="metrics-row">
+              <!-- Score Gauge -->
+              <div class="gauge-box">
+                <div class="gauge-circle" id="gaugeCircle">
+                  <div class="gauge-inner">
+                    <span class="gauge-value" id="confidenceValue">0%</span>
+                    <span class="gauge-label">Confidence</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Risk Signal Metrics Grid -->
+              <div class="signals-grid">
+                <div class="signal-item">
+                  <span class="signal-label"><i class="fa-solid fa-clock"></i> Urgency Index</span>
+                  <span class="signal-val" id="sigUrgency">0</span>
+                </div>
+                <div class="signal-item">
+                  <span class="signal-label"><i class="fa-solid fa-link"></i> Suspicious Links</span>
+                  <span class="signal-val" id="sigLinks">0</span>
+                </div>
+                <div class="signal-item">
+                  <span class="signal-label"><i class="fa-solid fa-dollar-sign"></i> Financial Signals</span>
+                  <span class="signal-val" id="sigFinancial">No</span>
+                </div>
+                <div class="signal-item">
+                  <span class="signal-label"><i class="fa-solid fa-font"></i> CAPS Ratio</span>
+                  <span class="signal-val" id="sigCaps">0%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Explainable AI (XAI) Trigger Word Highlighting -->
+            <div class="xai-section">
+              <h4><i class="fa-solid fa-eye"></i> Explainable AI (Trigger Word Analysis)</h4>
+              <p class="xai-hint">Hover over highlighted terms to see why the model flagged them:</p>
+              <div class="highlight-container" id="highlightContent">
+                <!-- Dynamic highlighted text spans render here -->
+              </div>
+            </div>
+
+            <!-- Risk Rationale List -->
+            <div class="rationale-section">
+              <h4><i class="fa-solid fa-list-check"></i> Key Risk Factors Identified</h4>
+              <ul class="reasons-list" id="reasonsList">
+                <!-- Dynamic risk factors render here -->
+              </ul>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- TAB 2: BATCH FILE SCANNER -->
+    <main class="tab-content hidden" id="tab-batch">
+      <div class="card full-width-card">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-file-csv"></i> Batch Message & Dataset Scanner</h3>
+          <p class="card-desc">Upload a CSV file containing message rows or enter bulk text to analyze multiple messages at once.</p>
+        </div>
+
+        <div class="batch-upload-zone" id="dropZone">
+          <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+          <h4>Drag & Drop CSV File Here</h4>
+          <p>File should contain a <code>text</code> or <code>message</code> column</p>
+          <div class="upload-actions">
+            <label for="csvFileInput" class="btn btn-secondary">
+              <i class="fa-solid fa-folder-open"></i> Browse File
+            </label>
+            <input type="file" id="csvFileInput" accept=".csv, .txt" class="hidden" />
+            <button class="btn btn-primary" id="btnSampleBatch">
+              <i class="fa-solid fa-vial"></i> Load Demo Batch (20 Messages)
+            </button>
+          </div>
+        </div>
+
+        <!-- Batch Results Workspace -->
+        <div class="batch-results hidden" id="batchResults">
+          <div class="batch-summary-bar">
+            <div class="sum-card total">
+              <span class="sum-num" id="sumTotal">0</span>
+              <span class="sum-label">Total Messages</span>
+            </div>
+            <div class="sum-card spam">
+              <span class="sum-num" id="sumSpam">0</span>
+              <span class="sum-label">Spam Detected</span>
+            </div>
+            <div class="sum-card ham">
+              <span class="sum-num" id="sumHam">0</span>
+              <span class="sum-label">Legitimate / Safe</span>
+            </div>
+            <div class="sum-card ratio">
+              <span class="sum-num" id="sumRatio">0%</span>
+              <span class="sum-label">Spam Rate</span>
+            </div>
+          </div>
+
+          <div class="table-toolbar">
+            <div class="table-filters">
+              <button class="filter-chip active" data-filter="all">All Messages</button>
+              <button class="filter-chip" data-filter="spam">Spam Only</button>
+              <button class="filter-chip" data-filter="ham">Safe Only</button>
+            </div>
+            <button class="btn btn-secondary" id="btnExportCSV">
+              <i class="fa-solid fa-file-export"></i> Download Results CSV
+            </button>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="batch-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Channel</th>
+                  <th>Message Preview</th>
+                  <th>Verdict</th>
+                  <th>Confidence</th>
+                  <th>Urgency</th>
+                </tr>
+              </thead>
+              <tbody id="batchTableBody">
+                <!-- Batch rows render here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- TAB 3: MODEL ANALYTICS & PERFORMANCE -->
+    <main class="tab-content hidden" id="tab-analytics">
+      <div class="analytics-grid">
+        
+        <!-- Metrics Overview Card -->
+        <div class="card metrics-overview-card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-chart-pie"></i> Model Benchmark Scores</h3>
+          </div>
+          <div class="kpi-grid">
+            <div class="kpi-box">
+              <span class="kpi-val" id="metricAcc">98.5%</span>
+              <span class="kpi-label">Overall Accuracy</span>
+            </div>
+            <div class="kpi-box">
+              <span class="kpi-val" id="metricF1">98.4%</span>
+              <span class="kpi-label">F1 Score</span>
+            </div>
+            <div class="kpi-box">
+              <span class="kpi-val" id="metricPrec">99.0%</span>
+              <span class="kpi-label">Precision</span>
+            </div>
+            <div class="kpi-box">
+              <span class="kpi-val" id="metricRec">97.8%</span>
+              <span class="kpi-label">Recall</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Confusion Matrix Card -->
+        <div class="card confusion-card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-table-cells"></i> Confusion Matrix</h3>
+          </div>
+          <div class="cm-grid">
+            <div class="cm-cell true-neg">
+              <span class="cm-val" id="cmTN">0</span>
+              <span class="cm-desc">True Negative (Safe identified as Safe)</span>
+            </div>
+            <div class="cm-cell false-pos">
+              <span class="cm-val" id="cmFP">0</span>
+              <span class="cm-desc">False Positive (Safe wrongly flagged)</span>
+            </div>
+            <div class="cm-cell false-neg">
+              <span class="cm-val" id="cmFN">0</span>
+              <span class="cm-desc">False Negative (Spam missed)</span>
+            </div>
+            <div class="cm-cell true-pos">
+              <span class="cm-val" id="cmTP">0</span>
+              <span class="cm-desc">True Positive (Spam caught)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Algorithm Comparison Table Card -->
+        <div class="card full-width-card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-code-compare"></i> Machine Learning Classifier Benchmark</h3>
+          </div>
+          <div class="table-wrapper">
+            <table class="batch-table">
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Classifier Type</th>
+                  <th>Accuracy</th>
+                  <th>F1 Score</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="algoComparisonBody">
+                <!-- Algo comparison rows render here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>ShieldSpam AI Detector • Developed with Python 3.13, Scikit-Learn NLP & Flask • Open Source</p>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

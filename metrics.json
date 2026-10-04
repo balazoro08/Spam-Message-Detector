@@ -1,0 +1,34 @@
+{
+  "dataset_size": 57,
+  "spam_count": 30,
+  "ham_count": 27,
+  "accuracy": 1.0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1_score": 1.0,
+  "confusion_matrix": {
+    "tn": 27,
+    "fp": 0,
+    "fn": 0,
+    "tp": 30
+  },
+  "model_comparison": {
+    "Naive Bayes": {
+      "accuracy": 1.0,
+      "f1_score": 1.0
+    },
+    "Logistic Regression": {
+      "accuracy": 1.0,
+      "f1_score": 1.0
+    },
+    "Linear Support Vector Machine": {
+      "accuracy": 1.0,
+      "f1_score": 1.0
+    },
+    "Soft Voting Ensemble (Active)": {
+      "accuracy": 1.0,
+      "f1_score": 1.0
+    }
+  },
+  "feature_count": 1539
+}
